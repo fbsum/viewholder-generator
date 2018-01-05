@@ -7,14 +7,16 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiUtilBase
+import com.intellij.ui.components.JBScrollPane
+import java.awt.Dimension
 import javax.swing.JFrame
+import javax.swing.JScrollPane
+import javax.swing.JTextArea
 import javax.swing.WindowConstants
 
 class ViewHolderGenerateAction : AnAction() {
@@ -67,11 +69,11 @@ class ViewHolderGenerateAction : AnAction() {
         val entries = Utils.getEntriesFromLayout(layoutFile)
         log.info("entries = " + entries)
         if (entries.isNotEmpty()) {
-            showDialog(project, entries)
+            showDialog(entries)
         }
     }
 
-    private fun showDialog(project: Project, entries: ArrayList<Entry>) {
+    private fun showDialog(entries: ArrayList<Entry>) {
         val contentPanel = ContentPanel(entries)
 
         val dialog = JFrame()
@@ -90,19 +92,42 @@ class ViewHolderGenerateAction : AnAction() {
         contentPanel.onConfirmListener = object : ContentPanel.OnConfirmListener {
             override fun onConfirm(entries: ArrayList<Entry>) {
                 if (entries != null && entries.isNotEmpty()) {
-                    entries.forEach { log.info("entry = " + it) }
-                    object : WriteCommandAction.Simple<Any>(project) {
-                        @Throws(Throwable::class)
-                        override fun run() {
-                            ViewHolderWriter(project,entries).execute()
-                        }
-                    }.execute()
+                    genViewHolder(entries)
                 }
-
                 dialog.isVisible = false
                 dialog.dispose()
             }
         }
+    }
+
+    private fun genViewHolder(entries: ArrayList<Entry>) {
+        val sb = StringBuilder()
+        sb.append("private class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {")
+        sb.appendln()
+        entries.forEach {
+            sb.append("    val ${it.variableName} = itemView.findViewById<${it.name}>(${it.fullID})")
+            sb.appendln()
+        }
+        sb.append("}")
+
+        showResultDialog(sb.toString())
+    }
+
+    private fun showResultDialog(content: String) {
+        val textArea = JTextArea()
+        textArea.append(content)
+
+        val panel = JBScrollPane(textArea)
+        panel.preferredSize = Dimension(640, 360)
+        panel.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+
+        // frame
+        val frame = JFrame()
+        frame.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
+        frame.contentPane.add(panel)
+        frame.pack()
+        frame.setLocationRelativeTo(null)
+        frame.isVisible = true
     }
 
 }
