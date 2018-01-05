@@ -51,6 +51,9 @@ class ContentPanel(private val entries: ArrayList<Entry>) : JPanel() {
         }
     }
 
+    /**
+     * Bottom Buttons Panel
+     */
     private fun createButtonsPanel(): JPanel {
         val cancelButton = JButton()
         cancelButton.action = object : AbstractAction() {

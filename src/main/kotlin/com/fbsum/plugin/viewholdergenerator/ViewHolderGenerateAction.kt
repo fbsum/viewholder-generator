@@ -73,7 +73,11 @@ class ViewHolderGenerateAction : AnAction() {
         }
     }
 
+    /**
+     * 显示选择对话框
+     */
     private fun showDialog(entries: ArrayList<Entry>) {
+
         val contentPanel = ContentPanel(entries)
 
         val dialog = JFrame()
@@ -100,12 +104,15 @@ class ViewHolderGenerateAction : AnAction() {
         }
     }
 
+    /**
+     * 根据设置生成 ViewHolder 代码
+     */
     private fun genViewHolder(entries: ArrayList<Entry>) {
         val sb = StringBuilder()
         sb.append("private class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {")
         sb.appendln()
         entries.forEach {
-            sb.append("    val ${it.variableName} = itemView.findViewById<${it.name}>(${it.fullID})")
+            sb.append("    val ${it.variableName} = itemView.findViewById<${it.name}>(${it.fullId})")
             sb.appendln()
         }
         sb.append("}")
@@ -113,6 +120,9 @@ class ViewHolderGenerateAction : AnAction() {
         showResultDialog(sb.toString())
     }
 
+    /**
+     * 显示结果对话框
+     */
     private fun showResultDialog(content: String) {
         val textArea = JTextArea()
         textArea.append(content)

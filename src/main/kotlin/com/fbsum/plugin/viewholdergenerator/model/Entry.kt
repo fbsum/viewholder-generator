@@ -10,6 +10,7 @@ class Entry(name: String, id: String) {
     }
 
     var id: String = ""
+    var fullId: String = ""
     var isAndroidNS = false
     var fullName: String? = null // element name with package
     var name: String // element name
@@ -26,6 +27,13 @@ class Entry(name: String, id: String) {
 
             val androidNS = matcher.group(1)
             this.isAndroidNS = !(androidNS == null || androidNS.isEmpty())
+        }
+
+        // full id
+        fullId = if (isAndroidNS) {
+            "android.R.id.$id"
+        } else {
+            "R.id.$id"
         }
 
         // name
@@ -59,26 +67,6 @@ class Entry(name: String, id: String) {
     }
 
     /**
-     * Create full ID for using in layout XML files
-     *
-     * @return
-     */
-    val fullID: String
-        get() {
-            val fullID = StringBuilder()
-            val rPrefix = if (isAndroidNS) {
-                "android.R.id."
-            } else {
-                "R.id."
-            }
-
-            fullID.append(rPrefix)
-            fullID.append(id)
-
-            return fullID.toString()
-        }
-
-    /**
      * Check validity of field name
      */
     fun checkValidity(): Boolean {
@@ -87,11 +75,9 @@ class Entry(name: String, id: String) {
         return isValid
     }
 
-    /**
-     * To string
-     */
     override fun toString(): String {
-        return "Entry(id='$id', isAndroidNS=$isAndroidNS, fullName=$fullName, name='$name', variableName='$variableName', isValid=$isValid, used=$used)"
+        return "Entry(id='$id', fullId='$fullId', isAndroidNS=$isAndroidNS, fullName=$fullName, name='$name', variableName='$variableName', isValid=$isValid, used=$used)"
     }
+
 
 }
