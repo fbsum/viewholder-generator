@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.fbsum.plugin.viewholdergenerator</id>
     <name>ViewHolder Generator</name>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <vendor email="scausum@gmail.com" url="https://github.com/fbsum">fbsum</vendor>
 
     <description><![CDATA[
@@ -9,7 +9,7 @@
     ]]></description>
 
     <change-notes><![CDATA[
-      Release 0.0.1: Initial release.<br>
+      Release 0.0.2: Bugfix error id.<br>
     ]]>
     </change-notes>
 

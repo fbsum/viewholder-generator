@@ -31,9 +31,9 @@ class Entry(name: String, id: String) {
 
         // full id
         fullId = if (isAndroidNS) {
-            "android.R.id.$id"
+            "android.R.id.${this.id}"
         } else {
-            "R.id.$id"
+            "R.id.${this.id}"
         }
 
         // name
